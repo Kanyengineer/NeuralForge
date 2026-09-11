@@ -1,14 +1,14 @@
 import pandas as pd
 import seaborn as sns
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_absolute_error
 import matplotlib.pyplot as plt
 import pickle
 import os
 
 # ---------------- LOAD DATA ----------------
-df = pd.read_csv("datasets/flood.csv").sample(200000, random_state=42)   # ✅ removed fixed sampling
+df = pd.read_csv("datasets/flood.csv")
 df = df.drop("id", axis=1)
 
 print("Dataset shape:", df.shape)
@@ -22,12 +22,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # ---------------- MODEL ----------------
-model = RandomForestRegressor(
-    n_estimators=200,
-    max_depth=15,
-    random_state=42,
-    n_jobs=-1
-)
+model = LinearRegression()
 
 model.fit(X_train, y_train)
 
@@ -44,18 +39,23 @@ pickle.dump(list(X.columns), open("models/features.pkl", "wb"))
 print("Model trained and saved successfully!")
 
 # ---------------- FEATURE IMPORTANCE ----------------
-importances = model.feature_importances_
+# LinearRegression has no .feature_importances_ -> use coefficients instead.
+# Coefficients can be negative, so we show signed values (color-coded)
+# rather than taking abs(), since direction of effect is meaningful here.
+importances = model.coef_
 features = X.columns
 
-# remove old image if exists
 if os.path.exists("feature_importance.png"):
     os.remove("feature_importance.png")
 
+colors = ["#d62728" if c < 0 else "#1f77b4" for c in importances]
+
 plt.clf()
-plt.figure(figsize=(10,6))
-plt.barh(features, importances)
-plt.title("Feature Importance")
-plt.xlabel("Importance")
+plt.figure(figsize=(10, 6))
+plt.barh(features, importances, color=colors)
+plt.axvline(x=0, color="black", linewidth=0.8)
+plt.title("Feature Coefficients (Linear Regression)")
+plt.xlabel("Coefficient (effect on FloodProbability)")
 plt.ylabel("Features")
 plt.tight_layout()
 plt.savefig("feature_importance.png")
@@ -67,7 +67,7 @@ if os.path.exists("residual_plot.png"):
     os.remove("residual_plot.png")
 
 plt.clf()
-plt.figure(figsize=(8,6))
+plt.figure(figsize=(8, 6))
 plt.scatter(y_pred, residuals, alpha=0.5)
 plt.axhline(y=0, color='red', linestyle='--')
 
@@ -82,7 +82,7 @@ plt.savefig("residual_plot.png")
 corr = df.corr()
 
 plt.clf()
-plt.figure(figsize=(10,8))
+plt.figure(figsize=(10, 8))
 sns.heatmap(corr, annot=False, cmap="coolwarm")
 
 plt.title("Feature Correlation Heatmap")
