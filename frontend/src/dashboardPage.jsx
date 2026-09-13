@@ -13,6 +13,8 @@ import {
 
 const STATES = ["Bihar", "Odisha"];
 
+const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5000";
+
 function riskColor(risk) {
   if (risk === "HIGH") return "#ef4444";
   if (risk === "MEDIUM") return "#f59e0b";
@@ -33,7 +35,7 @@ function Dashboard() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get("http://127.0.0.1:5000/history", {
+      const res = await axios.get(`${API_URL}/history`, {
         params: { state, limit: 50 },
         timeout: 10000,
       });
@@ -56,7 +58,7 @@ function Dashboard() {
       return;
     }
     try {
-      await axios.delete(`http://127.0.0.1:5000/history/${id}`);
+      await axios.delete(`${API_URL}/history/${id}`);
       // Refresh the list rather than manually splicing state, so the
       // trend/chart/latest-risk cards all stay in sync with the real data.
       fetchHistory(selectedState);

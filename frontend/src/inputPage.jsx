@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+// Uses .env.development locally (http://127.0.0.1:5000) and .env.production
+// when deployed (the real Render backend URL) — no hardcoded URL here.
+const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5000";
+
 export default function InputPage() {
   const navigate = useNavigate();
 
@@ -46,7 +50,7 @@ export default function InputPage() {
         ClimateChange: Number(climate)
       };
 
-      const res = await axios.post("http://127.0.0.1:5000/predict", data, {
+      const res = await axios.post(`${API_URL}/predict`, data, {
         timeout: 15000
       });
 

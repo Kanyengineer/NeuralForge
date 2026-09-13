@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Circle, ImageOverlay } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5000";
+
 export default function ResultPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -642,7 +644,7 @@ export default function ResultPage() {
               Hydrological feature weights driving the neural prediction.
             </div>
             <img
-              src={`http://127.0.0.1:5000/feature_importance.png?${Date.now()}`}
+              src={`${API_URL}/feature_importance.png?${Date.now()}`}
               alt="Feature Importance"
               style={{ width: "100%", borderRadius: "8px", border: "1px solid #e2e8f0" }}
             />
@@ -666,7 +668,7 @@ export default function ResultPage() {
               Model error variance distribution across test catchments.
             </div>
             <img
-              src="http://127.0.0.1:5000/residual_plot.png"
+              src={`${API_URL}/residual_plot.png`}
               alt="Residual"
               style={{ width: "100%", borderRadius: "8px", border: "1px solid #e2e8f0" }}
             />
