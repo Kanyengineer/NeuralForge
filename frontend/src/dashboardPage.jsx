@@ -37,7 +37,7 @@ function Dashboard() {
     try {
       const res = await axios.get(`${API_URL}/history`, {
         params: { state, limit: 50 },
-        timeout: 10000,
+        timeout: 60000,
       });
       // API returns most-recent-first; reverse for a left-to-right timeline
       setRecords([...res.data.predictions].reverse());
