@@ -51,7 +51,7 @@ export default function InputPage() {
       };
 
       const res = await axios.post(`${API_URL}/predict`, data, {
-        timeout: 15000
+        timeout: 60000
       });
 
       navigate("/result", {
@@ -66,7 +66,7 @@ export default function InputPage() {
     } catch (err) {
       console.error("ERROR:", err);
       if (err.code === "ECONNABORTED") {
-        setError("The prediction is taking longer than expected. Please try again.");
+        setError("The server is taking a while to respond, it may be waking up from idle (free hosting tier). Please try again in a moment.");
       } else if (err.response) {
         setError(err.response.data?.error || "The server couldn't process this request.");
       } else {
